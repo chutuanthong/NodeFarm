@@ -1,22 +1,21 @@
 const express = require('express');
 
+const morgan = require('morgan');
+
 const app = express();
-const port = 3000;
 
-/*
-  Xác định URL :
-  trả về 1 callback gồm req và res 
-*/
+//import mouting
+const tourRouter = require('./routers/tourRouters');
+const userRouter = require('./routers/userRouters');
+// sử dụng morgan trong development
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
+app.use(express.json());
+app.use(express.static(`${__dirname}/public`));
 
-app.get('/', (req, res) => {
-  res.status(200).send('Hello from server side!');
-});
+// Moutting : tạo ra các root nhỏ hơn cho router
+app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', userRouter);
 
-app.post('/', (req, res) => {
-  res.send('You can post to this endpoint..');
-});
-
-app.listen(port, () => {
-  console.log(`App listen on port ${port} ...`);
-});
-//hello thong
+module.exports = app;
